@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/models/task_data.dart';
 import 'package:todo_app/screens/add_task_screen.dart';
 
-import '../models/task.dart';
 import '../widgets/tasks_list.dart';
 
-class TasksScreen extends StatefulWidget {
+class TasksScreen extends StatelessWidget {
   const TasksScreen({super.key});
 
   @override
-  State<TasksScreen> createState() => _TasksScreenState();
-}
-
-class _TasksScreenState extends State<TasksScreen> {
-  List<Task> tasks = [
-    Task(name: "Buy milk"),
-    Task(name: "Buy eggs"),
-  ];
-
-  String getTaskCount() {
-    if (tasks.isEmpty) return "No tasks";
-
-    var count = tasks.length;
-
-    if (count == 1) {
-      return "$count task";
-    } else {
-      return "$count tasks";
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    var taskData = context.watch<TaskData>();
+
+    String getTaskCount(TaskData taskData) {
+      if (taskData.tasks.isEmpty) return "No tasks";
+
+      var count = taskData.taskCount;
+
+      if (count == 1) {
+        return "$count task";
+      } else {
+        return "$count tasks";
+      }
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -41,13 +34,7 @@ class _TasksScreenState extends State<TasksScreen> {
               child: Container(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: AddTaskScreen(
-                  addTaskCallback: (newTaskTitle) {
-                    setState(() {
-                      tasks.add(Task(name: newTaskTitle));
-                    });
-                  },
-                ),
+                child: const AddTaskScreen(),
               ),
             ),
           );
@@ -83,7 +70,7 @@ class _TasksScreenState extends State<TasksScreen> {
                       fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  getTaskCount(),
+                  getTaskCount(taskData),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18.0,
@@ -101,9 +88,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   topRight: Radius.circular(20),
                 ),
               ),
-              child: TasksList(
-                tasks: tasks,
-              ),
+              child: const TasksList(),
             ),
           ),
         ],

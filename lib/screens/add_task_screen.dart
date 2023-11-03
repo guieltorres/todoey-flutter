@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/task_data.dart';
 
 class AddTaskScreen extends StatelessWidget {
-  final Function addTaskCallback;
-
-  const AddTaskScreen({super.key, required this.addTaskCallback});
+  const AddTaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final newTaskController = TextEditingController();
     late String newTaskTitle;
+    var taskData = context.watch<TaskData>();
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -37,7 +38,6 @@ class AddTaskScreen extends StatelessWidget {
               TextField(
                 autofocus: true,
                 textAlign: TextAlign.center,
-                controller: newTaskController,
                 onChanged: (value) {
                   newTaskTitle = value;
                 },
@@ -51,8 +51,8 @@ class AddTaskScreen extends StatelessWidget {
               const SizedBox(height: 12),
               MaterialButton(
                 onPressed: () => {
-                  addTaskCallback(newTaskTitle),
-                  newTaskController.clear(),
+                  taskData.addTask(name: newTaskTitle),
+                  Navigator.pop(context),
                 },
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 color: Colors.lightBlueAccent,
